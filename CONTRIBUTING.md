@@ -23,31 +23,6 @@ XDM is driven by Adobe, but it is not specific to Adobe products.
 This means that models should capture the universal concepts of digital experiences, not specific implementations, no matter if they are part of an Adobe product or not.
 If you need to express a concept that is specific to an Adobe (or other) product, that is not universal, it should be formulated in an XDM extension instead.
 
-## Copyright and Licensing
-
-XDM is an Open Standard with appropriate open licensing. The [License](LICENSE) is the Creative Commons 4.0 Attribution International license.
-
-Adobe does not require you to assign to Adobe the copyright of your contribution. Contributions must be made by copyright owners, or individuals with the rights to assign the licensing of the contribution on behalf of the copyright owner.
-
-Where possible, include the Creative Commons Attribution 4.0 International (CC BY 4.0) license summary at the top of each file along with the copyright info.
-
-### Contributor License Agreement
-
-All third-party contributions to this project must be accompanied by a signed contributor license. This gives Adobe permission to redistribute your contributions as part of the project. Sign our CLA at [http://opensource.adobe.com/cla.html](http://opensource.adobe.com/cla.html). You only need to submit an [Adobe CLA](http://opensource.adobe.com/cla.html) one time.
-
-### License Inclusion
-
-You can include the Creative Commons Attribution 4.0 International (CC BY 4.0) license summary from below, ensure to update the copyright details.
-
-```
-"meta:license": [
-   "->Your copyright statement here<-",
-   "This work is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license",
-   "you may not use this file except in compliance with the License. You may obtain a copy",
-   "of the License at https://creativecommons.org/licenses/by/4.0/"
- ],
-```
-
 ## How to Contribute
 
 0.  If you haven't done so, sign the [Adobe CLA](http://opensource.adobe.com/cla.html)
@@ -267,19 +242,32 @@ You would generally create following types of JSON schemas while creating pull r
 In genral all the above XDM schemas are mostly similar in structure with a difference of certain "meta" key words which distinguish one from the another.
 The following sections compose an XDM JSON schema
 
-#### General Licensing information
+#### Copyright and Licensing
 
-```json
-{
-  "meta:license": [
-    "Copyright <2021> Adobe Systems Incorporated. All rights reserved.",
-    "This work is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license",
-    "you may not use this file except in compliance with the License. You may obtain a copy",
-    "of the License at https://creativecommons.org/licenses/by/4.0/"
-  ],
+XDM is an Open Standard with appropriate open licensing. The [License](LICENSE) is the Creative Commons 4.0 Attribution International license.
+
+Adobe does not require you to assign to Adobe the copyright of your contribution. Contributions must be made by copyright owners, or individuals with the rights to assign the licensing of the contribution on behalf of the copyright owner.
+
+Where possible, include the Creative Commons Attribution 4.0 International (CC BY 4.0) license summary at the top of each file along with the copyright info.
+
+##### Contributor License Agreement
+
+All third-party contributions to this project must be accompanied by a signed contributor license. This gives Adobe permission to redistribute your contributions as part of the project. Sign our CLA at [http://opensource.adobe.com/cla.html](http://opensource.adobe.com/cla.html). You only need to submit an [Adobe CLA](http://opensource.adobe.com/cla.html) one time.
+
+##### License Inclusion
+
+You can include the Creative Commons Attribution 4.0 International (CC BY 4.0) license summary from below, ensure to update the copyright details.
+
+```
+"meta:license": [
+   "->Your copyright statement here<-",
+   "This work is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license",
+   "you may not use this file except in compliance with the License. You may obtain a copy",
+   "of the License at https://creativecommons.org/licenses/by/4.0/"
+ ],
 ```
 
-#### Define the following
+#### Define the following Schema Properties
 
 - Schema ID - This is a unique ID given to an XDM schema which will never change for the lifetime of the schema.
 - Draft version of the JSON Schema specifications
