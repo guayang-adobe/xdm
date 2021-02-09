@@ -183,7 +183,7 @@ Run `npm run lint` before committing. The `lint` command is able to fix some eas
 - Always keep in mind the uber schema of the class when you create mixins and the way you define properties.
 - Think about wrapping the root level attributes in some business context/category.
 
-#### No categorization example
+#### No categorization example (Not recommended)
 
 ```json
 {
@@ -216,7 +216,7 @@ Run `npm run lint` before committing. The `lint` command is able to fix some eas
 }
 ```
 
-#### With categorization
+#### With categorization (Recommended)
 
 ```json
 {
@@ -255,17 +255,143 @@ Run `npm run lint` before committing. The `lint` command is able to fix some eas
 - Create Data Types only for the cases where you see re-usability of the properties in multiple MIXINS else, define those properties inline within the MIXINs.
 - If a certain data type you create will always be used inside only one MIXIN, then inline the data type properties within the MIXIN itself.
 
+### XDM Json Schema structure - General guidelines
+
+You would generally create following types of JSON schemas while creating pull requests on GITHUB.
+- CLASS
+- MIXIN
+- DATA TYPE
+- GLOBAL SCHEMA
+
+In genral all the above XDM schemas are mostly similar in structure with a difference of certain "meta" key words which distinguish one from the another.
+The following sections compose an XDM JSON schema
+
+#### General Licensing information
+
+```json
+{
+  "meta:license": [
+    "Copyright <2021> Adobe Systems Incorporated. All rights reserved.",
+    "This work is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license",
+    "you may not use this file except in compliance with the License. You may obtain a copy",
+    "of the License at https://creativecommons.org/licenses/by/4.0/"
+  ],
+```  
+
+#### Define the following
+- Schema ID - This is a unique ID given to an XDM schema which will never change for the lifetime of the schema.
+- Draft version of the JSON Schema specifications
+- Title - A Short title for the schema. This is apprears on the UI when you compose schemas.
+- type - "object"
+- Description - This should be detailed enough so that the users know when to use these schemas.
+
+```json
+  "$id": "https://ns.adobe.com/xdm/classes/class-name",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "title": "Schema Title goes here",
+  "type": "object",
+  "description": "A detailed description of the schema goes here.",
+```  
+#### Define the "meta:" keywords
+- To make a schema extendable set the below meta keyword to "true"
+
+```json  
+  "meta:extensible": true
+```
+- To make a schema appear in the UI, set the below meta keyword to "true"
+
+```json  
+  "meta:abstract": true
+```
+- To define a CLASS, set the below meta keyword to extend one of the XDM behaviors (record/timeseries)
+
+```json  
+  "meta:extends": ["https://ns.adobe.com/xdm/data/record"]
+```
+- To define a MIXIN, set the below meta keyword to extend one of the XDM Classes
+
+```json  
+  "meta:intendedToExtend": ["https://ns.adobe.com/xdm/classes/class-name"]
+```
+- Any JSON schema without the "meta:extends" and "meta:intendedToExtend" keywords is considered a data type.
+
+#### Define Schema properties 
+
+- Properties can either be defined inline to this schema or they could also be defined as refrence to an external schema (genrally a data type).
+- Its always recommended to have meta:enums defined for string properties. If required, do specify a pattern as well for string properties.
+- All array properties should have a well defined type of each element of the array.
+
+```json  
+  "definitions": {
+    "foo": {
+      "properties": {
+        "xdm:propertyA": {
+          "title": "Tile",
+          "description": "Description",
+          "type": "string"
+        },
+        "xdm:propertyB": {
+          "title": "Tile",
+          "description": "Description",
+          "type": "number"
+        },
+		"xdm:propertyC": {
+          "title": "Tile",
+          "description": "Description",
+          "type": "int"
+        },
+		"xdm:propertyD": {
+          "title": "Tile",
+          "description": "Description",
+          "type": "boolean"
+        },
+        "xdm:propertyE": {
+          "title": "Tile",
+          "description": "Description",
+          "$ref": "https://ns.adobe.com/xdm/datatypes/datatype-name"
+        },
+        "xdm:propertyArray": {
+          "type": "array",
+          "title": "Title",
+          "description": "Description",
+          "items": {
+            "type": "string",
+          }
+        }
+      }
+    }
+  },
+```
+#### Define the allOF section
+
+- The allOF section should specify the local definition from the schema as well as any other external schema which needs to be combined with this.
+
+```json  
+  "allOf": [
+    {
+      "$ref": "https://ns.adobe.com/xdm/data/record"
+    },
+    {
+      "$ref": "#/definitions/foo"
+    }
+  ],
+```
+#### Specify the meta:status
+
+Each schema should contain the enum property `meta:status` that designates it's stability. The value should be one of the following enumerations:
+
+- `stable` : No open issues and has been in `stabilizing` for 1 month without major changes
+- `experimental` : Major changes can be expected
+- `deprecated` : Schema is no longer maintained, supported or is superceded by another schema/set of schemas
+
+```json  
+  "meta:status": "experimental"
+}
+```
+
 ### Re-Use and Modularity
 
 In order to encourage re-use of definitions and modularity of schema files, avoid putting all property declarations into the root of the schema, instead use a `definitions` object with one sub-key for each semantic unit. Then, at the bottom of your schema definition, `$ref`erence them using the `allOf` construct.
-
-```json
-"allOf":[
-    {"$ref": "#/definitions/mydefinition"},
-    {"$ref": "#/definitions/myotherdefinition"},
-    {"$ref": "https://ns.adobe.com/xdm/assets/image#/definitions/someotherdefinition"},
-  ]
-```
 
 In this example, the definitions `mydefinition` and `myotherdefinition` are pulled from the current schema, while `someotherdefinition` is pulled from `https://ns.adobe.com/xdm/assets/image`
 
@@ -463,14 +589,6 @@ The use of JSON-LD namespaces in XDM means that schema definitions are organized
 Namespaces should be used to allow organizations to develop XDM-based grammars independently of each other, without fear of conflict and without a need to coordinate. In general, it is desirable to have the smallest set of namespaces possible while meeting the above goals.
 
 Namespaces _should not_ be used to organize or group concepts within a grammar. When organizing concepts, schema authors should either define sub-objects for each concept, or consider breaking out the concept into an independent schema, as described in "Re-use and Modularity".
-
-### Schema Stability Status
-
-Each schema should contains the enum property `meta:status` that designates it's stability. The value should be one of the following enumerations:
-
-- `stable` : No open issues and has been in `stabilizing` for 1 month without major changes
-- `experimental` : Major changes can be expected
-- `deprecated` : Schema is no longer maintained, supported or is superceded by another schema/set of schemas
 
 ### Other Schema Extensions
 
