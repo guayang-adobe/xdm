@@ -343,12 +343,12 @@ The following sections compose an XDM JSON schema
           "description": "Description",
           "type": "number"
         },
-		"xdm:propertyC": {
+	"xdm:propertyC": {
           "title": "Tile",
           "description": "Description",
           "type": "int"
         },
-		"xdm:propertyD": {
+	"xdm:propertyD": {
           "title": "Tile",
           "description": "Description",
           "type": "boolean"
