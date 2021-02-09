@@ -280,6 +280,7 @@ The following sections compose an XDM JSON schema
 ```
 
 #### Define the following
+
 - Schema ID - This is a unique ID given to an XDM schema which will never change for the lifetime of the schema.
 - Draft version of the JSON Schema specifications
 - Title - A Short title for the schema. This is apprears on the UI when you compose schemas.
@@ -295,11 +296,13 @@ The following sections compose an XDM JSON schema
 ```
 
 #### Define the "meta:" keywords
+
 - To make a schema extendable set the below meta keyword to "true"
 
 ```json
   "meta:extensible": true
 ```
+
 - To make a schema appear in the UI, set the below meta keyword to "true"
 
 ```json
@@ -320,7 +323,7 @@ The following sections compose an XDM JSON schema
 
 - Any JSON schema without the "meta:extends" and "meta:intendedToExtend" keywords is considered a data type.
 
-#### Define Schema properties 
+#### Define Schema properties
 
 - Properties can either be defined inline to this schema or they could also be defined as refrence to an external schema (genrally a data type).
 - Its always recommended to have meta:enums defined for string properties. If required, do specify a pattern as well for string properties.
