@@ -106,40 +106,6 @@ However, for values that need no context to convert, put off conversion by allow
 
 Avoid non-semantic limits – don’t put current resource limits in the data model. Limits (number ranges, choices, string length) should be based on business constraints or expressed independently.
 
-## Coding Styleguides
-
-- File names for schema files should be lower case and end with `.schema.json`
-- Include an `"$id"` with a value like `"https://ns.adobe.com/xdm/assets/image"` in the schema (but leave out the `.schema.json`)
-- When referencing schemas, use the absolute `$id`, don't use relative references like `../repo/asset.schema.json`
-- Don't nest schemas too deeply. Break inline type definitions into separate `*.schema.json` files if they have properties with object types themselves.
-- Don't make schemas too fine-grained, only create schemas for `object`s not for simple types like patterned strings
-- Ensure that there is a `meta:license` at the top of the schema
-- Use JSON Schema `draft-6`
-- Provide a `description` and `title` for each schema and each property
-- Have the `title` at the top of the schema, so that it can be found without scrolling
-- Make sure you have an example for every schema
-- All properties must have a specific type, while JSON-Schema does allow variability in types in cases like enumerations, concrete types are required in XDM
-- All properties should be defined as singular unless they have an array type(listItems[]) or have a need to have a plural name ("noOfClicks").
-- All boolean properties should be prefixed with "is"/"has" as appropriate and if it gramatically makes sense. Exceptions will be reviewed on case by case basis.
-- Convention is that property names are in camelCase, when they appear in JSON
-- Restrict the values of `string` properties as much as appropriate for the domain. `minLength`, `maxLength`, `pattern`, and `format` all can help with that.
-- Don't restrict values of `string` properties beyond the constraints of the domain, e.g. don't set a `maxLength` of 255, just because your current database uses a `VARCHAR(255)` default
-- Run `npm test` before you make a pull request
-- Acronyms and abbreviations in camelCase like ID, API, JSON are also capitalized in camelCase, such as `documentID`
-- When combining two acronyms, use lowercase for the first and uppercase for the second, such as `dmaID`
-- Only add your `ID` attributes if neccessary, use the `@id` convention otherwise from the class.
-- When using `enum` in JSON schema, document all values using `meta:enum`
-- When working with "soft enums" or "open enumerations", use `meta:enum` to document all known values
-
-Run `npm run lint` before committing. The `lint` command is able to fix some easy styling issues, including:
-
-- intent: 2 spaces
-- line breaks
-- spaces around delimiters
-- breaks long lines where possible
-
-`npm lint` uses [Prettier](https://prettier.io), which offers integrations for consistent formatting for many editors and IDEs.
-
 ### Json file location guidelines.
 
 - All the XDM standard JSON files should be placed under their respective directories on GITHUB.
@@ -386,6 +352,40 @@ Each schema should contain the enum property `meta:status` that designates it's 
   "meta:status": "experimental"
 }
 ```
+
+## Coding Styleguides
+
+- File names for schema files should be lower case and end with `.schema.json`
+- Include an `"$id"` with a value like `"https://ns.adobe.com/xdm/assets/image"` in the schema (but leave out the `.schema.json`)
+- When referencing schemas, use the absolute `$id`, don't use relative references like `../repo/asset.schema.json`
+- Don't nest schemas too deeply. Break inline type definitions into separate `*.schema.json` files if they have properties with object types themselves.
+- Don't make schemas too fine-grained, only create schemas for `object`s not for simple types like patterned strings
+- Ensure that there is a `meta:license` at the top of the schema
+- Use JSON Schema `draft-6`
+- Provide a `description` and `title` for each schema and each property
+- Have the `title` at the top of the schema, so that it can be found without scrolling
+- Make sure you have an example for every schema
+- All properties must have a specific type, while JSON-Schema does allow variability in types in cases like enumerations, concrete types are required in XDM
+- All properties should be defined as singular unless they have an array type(listItems[]) or have a need to have a plural name ("noOfClicks").
+- All boolean properties should be prefixed with "is"/"has" as appropriate and if it gramatically makes sense. Exceptions will be reviewed on case by case basis.
+- Convention is that property names are in camelCase, when they appear in JSON
+- Restrict the values of `string` properties as much as appropriate for the domain. `minLength`, `maxLength`, `pattern`, and `format` all can help with that.
+- Don't restrict values of `string` properties beyond the constraints of the domain, e.g. don't set a `maxLength` of 255, just because your current database uses a `VARCHAR(255)` default
+- Run `npm test` before you make a pull request
+- Acronyms and abbreviations in camelCase like ID, API, JSON are also capitalized in camelCase, such as `documentID`
+- When combining two acronyms, use lowercase for the first and uppercase for the second, such as `dmaID`
+- Only add your `ID` attributes if neccessary, use the `@id` convention otherwise from the class.
+- When using `enum` in JSON schema, document all values using `meta:enum`
+- When working with "soft enums" or "open enumerations", use `meta:enum` to document all known values
+
+Run `npm run lint` before committing. The `lint` command is able to fix some easy styling issues, including:
+
+- intent: 2 spaces
+- line breaks
+- spaces around delimiters
+- breaks long lines where possible
+
+`npm lint` uses [Prettier](https://prettier.io), which offers integrations for consistent formatting for many editors and IDEs.
 
 ### Re-Use and Modularity
 
