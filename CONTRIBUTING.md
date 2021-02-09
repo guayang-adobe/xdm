@@ -258,6 +258,7 @@ Run `npm run lint` before committing. The `lint` command is able to fix some eas
 ### XDM Json Schema structure - General guidelines
 
 You would generally create following types of JSON schemas while creating pull requests on GITHUB.
+
 - CLASS
 - MIXIN
 - DATA TYPE
@@ -276,7 +277,7 @@ The following sections compose an XDM JSON schema
     "you may not use this file except in compliance with the License. You may obtain a copy",
     "of the License at https://creativecommons.org/licenses/by/4.0/"
   ],
-```  
+```
 
 #### Define the following
 - Schema ID - This is a unique ID given to an XDM schema which will never change for the lifetime of the schema.
@@ -291,28 +292,32 @@ The following sections compose an XDM JSON schema
   "title": "Schema Title goes here",
   "type": "object",
   "description": "A detailed description of the schema goes here.",
-```  
+```
+
 #### Define the "meta:" keywords
 - To make a schema extendable set the below meta keyword to "true"
 
-```json  
+```json
   "meta:extensible": true
 ```
 - To make a schema appear in the UI, set the below meta keyword to "true"
 
-```json  
+```json
   "meta:abstract": true
 ```
+
 - To define a CLASS, set the below meta keyword to extend one of the XDM behaviors (record/timeseries)
 
-```json  
+```json
   "meta:extends": ["https://ns.adobe.com/xdm/data/record"]
 ```
+
 - To define a MIXIN, set the below meta keyword to extend one of the XDM Classes
 
-```json  
+```json
   "meta:intendedToExtend": ["https://ns.adobe.com/xdm/classes/class-name"]
 ```
+
 - Any JSON schema without the "meta:extends" and "meta:intendedToExtend" keywords is considered a data type.
 
 #### Define Schema properties 
@@ -321,7 +326,7 @@ The following sections compose an XDM JSON schema
 - Its always recommended to have meta:enums defined for string properties. If required, do specify a pattern as well for string properties.
 - All array properties should have a well defined type of each element of the array.
 
-```json  
+```json
   "definitions": {
     "foo": {
       "properties": {
@@ -362,11 +367,12 @@ The following sections compose an XDM JSON schema
     }
   },
 ```
+
 #### Define the allOF section
 
 - The allOF section should specify the local definition from the schema as well as any other external schema which needs to be combined with this.
 
-```json  
+```json
   "allOf": [
     {
       "$ref": "https://ns.adobe.com/xdm/data/record"
@@ -376,6 +382,7 @@ The following sections compose an XDM JSON schema
     }
   ],
 ```
+
 #### Specify the meta:status
 
 Each schema should contain the enum property `meta:status` that designates it's stability. The value should be one of the following enumerations:
@@ -384,7 +391,7 @@ Each schema should contain the enum property `meta:status` that designates it's 
 - `experimental` : Major changes can be expected
 - `deprecated` : Schema is no longer maintained, supported or is superceded by another schema/set of schemas
 
-```json  
+```json
   "meta:status": "experimental"
 }
 ```
