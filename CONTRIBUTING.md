@@ -122,7 +122,7 @@ Avoid non-semantic limits – don’t put current resource limits in the data mo
 - To itroduce a new entity in XDM, only add a new class if the new business concept could not be added by existing set of XDM classes.
 - If you have to add a new class, then keep all the properties in the class which will always be required. Then start putting mixins for different use cases.
 - Always keep in mind the uber schema of the class when you create mixins and the way you define properties.
-- Think about wrapping the root level attributes in some business context/category.
+- Think about wrapping the root level attributes in a MIXIN with in some business context/category.
 
 #### No categorization example (Not recommended)
 
@@ -205,7 +205,7 @@ You would generally create following types of JSON schemas while creating pull r
 - DATA TYPE
 - GLOBAL SCHEMA
 
-In genral all the above XDM schemas are mostly similar in structure with a difference of certain "meta" key words which distinguish one from the another.
+In general, all the above XDM schemas are mostly similar in structure with a difference of certain "meta" key words which distinguish one from the another.
 The following sections compose an XDM JSON schema
 
 #### Copyright and Licensing
@@ -251,16 +251,16 @@ You can include the Creative Commons Attribution 4.0 International (CC BY 4.0) l
 
 #### Define the "meta:" keywords
 
-- To make a schema extendable set the below meta keyword to "true"
-
-```json
-  "meta:extensible": true
-```
-
-- To make a schema appear in the UI, set the below meta keyword to "true"
+- To make a schema extendable, set the below meta keyword to "true"
 
 ```json
   "meta:abstract": true
+```
+
+- To make a schema not extendable, set the below meta keyword to "false"
+
+```json
+  "meta:abstract": false
 ```
 
 - To define a CLASS, set the below meta keyword to extend one of the XDM behaviors (record/timeseries)
@@ -269,13 +269,13 @@ You can include the Creative Commons Attribution 4.0 International (CC BY 4.0) l
   "meta:extends": ["https://ns.adobe.com/xdm/data/record"]
 ```
 
-- To define a MIXIN, set the below meta keyword to extend one of the XDM Classes
+- To define a MIXIN, set the below meta keyword to extend one or more XDM Classes
 
 ```json
   "meta:intendedToExtend": ["https://ns.adobe.com/xdm/classes/class-name"]
 ```
 
-- Any JSON schema without the "meta:extends" and "meta:intendedToExtend" keywords is considered a data type.
+- Any JSON schema which does not fall in any onf the above categories is considered a data type.
 
 #### Define Schema properties
 
@@ -300,7 +300,7 @@ You can include the Creative Commons Attribution 4.0 International (CC BY 4.0) l
 	"xdm:propertyC": {
           "title": "Tile",
           "description": "Description",
-          "type": "int"
+          "type": "integer"
         },
 	"xdm:propertyD": {
           "title": "Tile",
@@ -319,6 +319,23 @@ You can include the Creative Commons Attribution 4.0 International (CC BY 4.0) l
           "items": {
             "type": "string",
           }
+        }.
+        "xdm:propertyNested": {
+          "title": "Tile",
+          "description": "Description",
+          "type": "object",
+	  "properties": {
+	    "xdm:nestedPropertyA": {
+	      "title": "Title",
+	      "description": "Description",
+	      "type": "string"
+	    },
+	    "xdm:nestedPropertyB": {
+	      "title": "Title",
+	      "description": "Description",
+	      "type": "integer"
+	    }
+	  }
         }
       }
     }
@@ -395,37 +412,6 @@ In this example, the definitions `mydefinition` and `myotherdefinition` are pull
 
 JSON Schema [does not have a built-in inheritance mechanism](https://github.com/json-schema-org/json-schema-spec/issues/348#issuecomment-322940347), so the use of `definitions` is considered [best practice in structuring complex schemas](https://spacetelescope.github.io/understanding-json-schema/structuring.html).
 
-### Extensibility
-
-We use built-in JSON Schema capabilities to provide extensibility.
-These capabilities are augmented by some JSON LD-inspired extensions, without requiring consumers to become full-blown JSON LD processors.
-There are two modes of making XDM extensible: through custom properties and through new schemas.
-Custom properties and deriving new schemas from existing schemas are discussed in the next two sections
-
-#### Custom Properties
-
-In order to allow custom properties, use the `https://ns.adobe.com/xdm/common/extensible` schema as a `$ref` reference to the schema in question. This will make sure validation will mark any extension that uses ad-hoc, unregistered properties that potentially overwrites existing or future XDM core properties, as invalid.
-
-In detail, this schema fragment:
-
-1.  disallows the use of `@context` to define custom namespace prefixes
-2.  if `@context` is used, it enforces the namespace prefix mapping that XDM uses
-3.  it forbids the use of any property name prefix that is not listed in `schemas/common/context.jsonld`
-4.  it allows `patternProperties` that are full URIs, so that customers can add their own extensions, as explained in [the extensibility docs](docs/extensibility.md)
-
-XDM provides this JSON Schema fragment to that express these constraints. The schema fragment that can be added to a given schema, allowing you to validate example documents with extensions.
-
-##### Example
-
-In order to make a schema extensible, add the `https://ns.adobe.com/xdm/common/extensible#/definitions/@context` schema fragment reference to your schema definition.
-
-```json
-"allOf":[
-    {"$ref": "https://ns.adobe.com/xdm/common/extensible#/definitions/@context"},
-    {"$ref": "#/definitions/…"}
-  ]
-```
-
 #### New Schemas
 
 When it comes to expressing parent-child relationships between schemas, e.g. in order to create a new schema that inherits definitions from an existing schema, XDM distinguishes two things:
@@ -434,17 +420,6 @@ When it comes to expressing parent-child relationships between schemas, e.g. in 
 2.  How inheritance relationships are implemented
 
 JSON Schema does not have a built-in concept of schema inheritance, so XDM is using a set of custom properties and conventions to achieve the same semantics.
-
-##### Declaring a Schema to be Extensible
-
-Unless explicitly declared otherwise, XDM schemas cannot be extended.
-The author of a given schema has to declare the ability to extend a schema using the `meta:extensible` property at the root of the schema.
-`meta:extensible` is a `boolean` property, and only the value `true` is of any consequence, as the assumed default is `false`.
-If a schema is not extensible, the `meta:extensible` property can be omitted.
-
-In addition to **declaring** the extensibility, the schema author has to make sure that all properties that constitute the schema are defined in a child node of `definitions`.
-As you can see in the next section, the presence of a `definitions` object is expected, and will be validated by running `npm run lint`.
-The co-occurrence of `"meta:extensible": true` and `definitions` is enforced through rules in the meta-schema under `meta.schema.json`.
 
 ##### Extending a Schema with a new Schema
 
@@ -592,13 +567,8 @@ Namespaces _should not_ be used to organize or group concepts within a grammar. 
 
 XDM is using a couple of custom keywords that are not part of the JSON Schema standard. These include:
 
-- `meta:extensible`: see above, to describe schemas that allow custom properties
-- `meta:auditable`: for schemas that have created and last modified dates
-- `meta:descriptors`: to annotate schemas with additional metadata (see Schema Descriptors above)
-- `meta:enum`: for known values in enums, strings, and as property keys (see below)
+- `meta:enum`: Its recommended to define these for known values in enums, strings, These are also used in the UI for segmentation purpose.
 - `meta:tags`: to tag a Class/Mixin to a industry vertical.
-- `meta:conditionalField`
-- `meta:conditionalValue`
 
 ##### Soft and Hard Enumerations
 
@@ -616,29 +586,4 @@ For all writing, please follow the [Adobe I/O style guide](https://github.com/ad
 
 ## How Contributions get Reviewed
 
-The XDM project differentiates between major and minor contributions.
-
-- Minor contributions: contributions that do not change the meaning of the standard, such as corrections to typos, word order or formatting. Contributions to the project's `README.md` or `CONTRIBUTING.md` are also minor contributions.
-- Major contributions: all other contributions.
-
-### Minor Contributions
-
-One of the editors will look at the pull request within one week and flag it as `minor`. The editor will then either merge or reject the pull request. If you haven't heard back from the editors within a week, it is not impolite to send a reminder to [Grp-XDM-CoreWG](mailto:Grp-XDM-CoreWG@adobe.com).
-
-Feedback on the pull request will be given in writing, in GitHub.
-
-### Major Contributions
-
-One of the editors will look at the pull request within one week and flag it as `major`. The editor will then provide feedback on the pull request in GitHub.
-
-Every week, during the XDM working group meeting, all open pull requests will be reviewed and discussed. All feedback given in the meeting will be logged in GitHub. This real-time discussion will make sure all open pull requests will get attention.
-
-When the editors agree on the pull request, the pull request will either be merged or rejected. Until this is the case, the pull request will remain open. Editors are operating under the assumption of agreement, so that a single editor can authorize a merge.
-
-### Release cycles
-
 Every week, the PRs posted on github are reviewed by the XDM team. They are either proved to comments are posted for further clarifications.
-
-All approved PRs are deployed to INT/STG environments on the following Monday. They are pushed to PROD a week after.
-
-A global component release summary is sent out every week.
