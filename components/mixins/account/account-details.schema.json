@@ -85,10 +85,7 @@
         "xdm:defaultCurrencyCode": {
           "title": "Default Currency Code",
           "type": "string",
-          "examples": [
-            "USD",
-            "EUR"
-          ],
+          "examples": ["USD", "EUR"],
           "pattern": "^[A-Z]{3}$",
           "description": "The ISO 4217 currency code."
         },
